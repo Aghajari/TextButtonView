@@ -101,6 +101,10 @@ public class AmirTextButtonView extends AmirBaseParent {
     public void addText (AmirTextData data){
         texts.add(data);
     }
+    
+    public List<AmirTextData> getTexts(){
+        return texts;
+    }
 
     public void setDefaultBackground(Drawable bg){
         mBG1 = bg;
