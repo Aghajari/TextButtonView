@@ -23,6 +23,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+*@version : 1.00
+*@author : Amir Hossein Aghajari
+*/
 public class AmirTextButtonView extends AmirBaseParent {
 
     private  AmirTextButtonListener listener = null;
@@ -118,11 +122,9 @@ public class AmirTextButtonView extends AmirBaseParent {
     public void setButtonBackground(GradientDrawable bg){
         mBG2 = bg;
         if (builded) {
-            if (builded) {
                 buttonParent.setBackground(copy(bg));
                 buttonParent.enableClipToOutline();
                 enableClipToOutline();
-            }
         }
     }
 
