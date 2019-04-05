@@ -8,6 +8,7 @@ flat button + edit text view. (subscribe button
 - Customize Subscribe/Unsubscribe button
 - Customize Animations
 - add multiple texts (Ex. Thanks for subscribing)
+- Keyboard Manager
 
 ...
 
