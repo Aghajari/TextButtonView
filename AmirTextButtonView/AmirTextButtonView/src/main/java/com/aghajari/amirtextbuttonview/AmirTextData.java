@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 
 public class AmirTextData {
+    
     public CharSequence text;
     public long duration;
     public int textColor;
