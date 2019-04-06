@@ -1,6 +1,5 @@
 package com.aghajari.amirtextbuttonview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
@@ -8,17 +7,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
 import java.util.ArrayList;
 
 class AmirBaseParent extends ViewGroup{
   public static float scale = 0.0F;
   private static float deviceScale = 0.0F;
-  public static final int LEFT = 0;
-  public static final int RIGHT = 1; 
-  public static final int BOTH = 2; 
-  public static final int TOP = 0; 
-  public static final int BOTTOM = 1; 
+  private static final int LEFT = 0;
+  private static final int RIGHT = 1;
+  private static final int BOTH = 2;
+  private static final int TOP = 0;
+  private static final int BOTTOM = 1;
   public static boolean disableAccessibility = false;
 
   private float density = 1;
@@ -44,18 +42,18 @@ class AmirBaseParent extends ViewGroup{
     return  (int) (density * value);
   }
 
-  public static void setDeviceScale(float scale) { 
+  protected static void setDeviceScale(float scale) {
 	  deviceScale = scale; 
 	}
-  
-  public static void setUserScale(float userScale) {
+
+  protected static void setUserScale(float userScale) {
     if (Float.compare(deviceScale, userScale) == 0) {
       scale = 1.0F;
     } else
       scale = deviceScale / userScale;
   }
-  
-  public static float getDeviceScale() { return deviceScale; }
+
+  protected static float getDeviceScale() { return deviceScale; }
   
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     int count = getChildCount();
@@ -115,44 +113,44 @@ class AmirBaseParent extends ViewGroup{
   }
 
 
-  public int GetWidth() {
+  protected int GetWidth() {
     return this.getLayoutParams().width;
   }
 
-  public int GetHeight() {
+  protected int GetHeight() {
     return this.getLayoutParams().height;
   }
 
-  public int GetLeft(){
+  protected int GetLeft(){
     AmirBaseParent.LayoutParams lp = (AmirBaseParent.LayoutParams)this.getLayoutParams();
     return lp.left;
   }
 
-  public int GetTop(){
+  protected int GetTop(){
     AmirBaseParent.LayoutParams lp = (AmirBaseParent.LayoutParams)this.getLayoutParams();
     return lp.top;
   }
 
-  public void SetWidth(int width){
+  protected void SetWidth(int width){
     ViewGroup.LayoutParams lp = this.getLayoutParams();
     lp.width = width;
     requestLayout(this);
   }
 
-  public void SetHeight(int height) {
+  protected void SetHeight(int height) {
     ViewGroup.LayoutParams lp = this.getLayoutParams();
     lp.height = height;
     requestLayout(this);
   }
 
 
-  public void SetLeft(int left) {
+  protected void SetLeft(int left) {
     AmirBaseParent.LayoutParams lp = (AmirBaseParent.LayoutParams)this.getLayoutParams();
     lp.left = left;
     requestLayout(this);
   }
 
-  public void SetTop(final int top) {
+  protected void SetTop(final int top) {
     AmirBaseParent.LayoutParams lp = (AmirBaseParent.LayoutParams)this.getLayoutParams();
     lp.top = top;
     requestLayout(this);
@@ -171,13 +169,13 @@ class AmirBaseParent extends ViewGroup{
     }
   }
 
-  public void enableClipToOutline(){
+  protected void enableClipToOutline(){
     if (Build.VERSION.SDK_INT >= 21) {
       this.setClipToOutline(true);
     }
   }
 
-  public static void setClickEffect(View View, boolean Borderless) {
+  protected static void setClickEffect(View View, boolean Borderless) {
     int[] attrs;
     if (Borderless) {
       attrs = new int[] { android.R.attr.selectableItemBackgroundBorderless };
