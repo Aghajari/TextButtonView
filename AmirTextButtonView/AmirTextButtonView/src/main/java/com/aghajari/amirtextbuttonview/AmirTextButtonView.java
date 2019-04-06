@@ -12,21 +12,18 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
-*@version : 1.00
-*@author : Amir Hossein Aghajari
-*/
+ * @author : Amir Hossein Aghajari
+ * @version : 1.01
+ */
 public class AmirTextButtonView extends AmirBaseParent {
 
     private  AmirTextButtonListener listener = null;
@@ -55,7 +52,7 @@ public class AmirTextButtonView extends AmirBaseParent {
     public static final int STATE_BUTTON=1;
     public static final int STATE_BUTTON2=-1;
     private int state = 0;
-
+    private int mEditTextLeftMargin = -1,mEditTextRightMargin = -1;
     public AmirTextButtonView(Context context) {
         super(context);
         init();
@@ -73,6 +70,8 @@ public class AmirTextButtonView extends AmirBaseParent {
 
     private void init(){
         if (mIconWidth==-1) mIconWidth = dp(24);
+        if (mEditTextLeftMargin==-1) mEditTextLeftMargin = dp(12);
+        if (mEditTextRightMargin==-1) mEditTextRightMargin = dp(12);
         if (mIconParentWidth==-1) mIconParentWidth = dp(48);
         if (radius==-1) radius = dp(60);
         state = STATE_BUTTON;
@@ -105,9 +104,30 @@ public class AmirTextButtonView extends AmirBaseParent {
     public void addText (AmirTextData data){
         texts.add(data);
     }
-    
-    public List<AmirTextData> getTexts(){
+
+    public void removeText (int index){
+        texts.remove(index);
+    }
+
+    public AmirTextData getText (int index){
+        return texts.get(index);
+    }
+
+    public List<AmirTextData> getTexts() {
         return texts;
+    }
+
+    public void setEditTextMargin(int Margin){
+        mEditTextLeftMargin = Margin;
+        mEditTextRightMargin = Margin;
+    }
+
+    public void setEditTextLeftMargin(int Margin){
+        mEditTextLeftMargin = Margin;
+    }
+
+    public void setEditTextRightMargin(int Margin){
+        mEditTextRightMargin = Margin;
     }
 
     public void setDefaultBackground(Drawable bg){
@@ -122,9 +142,11 @@ public class AmirTextButtonView extends AmirBaseParent {
     public void setButtonBackground(GradientDrawable bg){
         mBG2 = bg;
         if (builded) {
+            if (builded) {
                 buttonParent.setBackground(copy(bg));
                 buttonParent.enableClipToOutline();
                 enableClipToOutline();
+            }
         }
     }
 
@@ -176,11 +198,16 @@ public class AmirTextButtonView extends AmirBaseParent {
          return mEditText;
     }
 
+    public AppCompatImageView getImageView() {
+        return (AppCompatImageView) mIcon.getChildAt(0);
+    }
+
     public void build(){
         if (builded) return;
 
         mEditText = new AppCompatEditText(getContext());
-        addView(mEditText,new AmirBaseParent.LayoutParams(dp(10),0,GetWidth()-mIconParentWidth-dp(10),GetHeight()));
+        addView(mEditText,new AmirBaseParent.LayoutParams
+                (mEditTextLeftMargin,0,GetWidth()-mIconParentWidth-mEditTextRightMargin,GetHeight()));
         mEditText.setHint(hint);
         mEditText.setHintTextColor(hintColor);
         mEditText.setTextSize(edtSize);
@@ -243,7 +270,9 @@ public class AmirTextButtonView extends AmirBaseParent {
         @Override
         public void onClick(View view) {
             if (AnimRunning) return;
-            if (state == STATE_BUTTON){
+            boolean can = true;
+            if (listener!=null) can=listener.buttonClick(STATE_BUTTON);
+            if (can&&state == STATE_BUTTON){
                 startCloseButtonAnimation();
                 mEditText.setText("");
                 setTextVisible(mEditText,buttonText.duration/3*2,true);
@@ -259,16 +288,46 @@ public class AmirTextButtonView extends AmirBaseParent {
             @Override
             public void onClick(View view) {
                 if (AnimRunning) return;
-                if (state == STATE_BUTTON2){
-                    state = STATE_BUTTON;
-                    if (listener!=null) listener.onStateChanged(state,buttonText);
-                    setAlphaVisible(buttonParent2,button2Text.duration,false);
-                    setTextVisible(button2,button2Text.duration,false);
-                    setAlphaVisible(buttonParent,buttonText.duration,true);
-                    setTextVisible(button,buttonText.duration,true);
+                boolean can = true;
+                if (listener!=null) can=listener.buttonClick(STATE_BUTTON2);
+                if (can && state == STATE_BUTTON2){
+                    switchToBtn1();
                 }
             }
         });
+    }
+
+    public boolean isAnimationRunning(){
+        return  AnimRunning;
+    }
+
+    public void toggleButton(){
+        if (state == STATE_BUTTON){
+            switchToBtn2();
+        }else if (state == STATE_BUTTON2){
+            switchToBtn1();
+        }
+    }
+
+    public void switchToButton1(){
+        if (state == STATE_BUTTON2){
+            switchToBtn1();
+        }
+    }
+
+    public void switchToButton2(){
+        if (state == STATE_BUTTON){
+            switchToBtn2();
+        }
+    }
+
+    private void switchToBtn1(){
+        state = STATE_BUTTON;
+        if (listener!=null) listener.onStateChanged(state,buttonText);
+        setAlphaVisible(buttonParent2,button2Text.duration,false);
+        setTextVisible(button2,button2Text.duration,false);
+        setAlphaVisible(buttonParent,buttonText.duration,true);
+        setTextVisible(button,buttonText.duration,true);
     }
 
     private void switchToBtn2(){
@@ -309,10 +368,10 @@ public class AmirTextButtonView extends AmirBaseParent {
 
                     //AddIcon
                     AmirBaseParent iconParent = new AmirBaseParent(getContext());
-                    buttonParent.addView(iconParent,new AmirBaseParent.LayoutParams(0,0,mIconParentWidth,mIconParentWidth));
+                    buttonParent.addView(iconParent,new AmirBaseParent.LayoutParams(0,0,mIconParentWidth,GetHeight()));
                     AppCompatImageView img = new AppCompatImageView(getContext());
                     iconParent.addView(img,new AmirBaseParent.LayoutParams((iconParent.GetWidth()/2)-(mIconWidth/2)
-                            ,(iconParent.GetHeight()/2)-(mIconWidth/2)-dp(2),mIconWidth,mIconWidth));
+                            ,(iconParent.GetHeight()/2)-(mIconWidth/2),mIconWidth,mIconWidth));
                     if (mBG3!=null) img.setImageDrawable(mBG3);
 
                     buttonIconClick(iconParent);
@@ -350,7 +409,8 @@ public class AmirTextButtonView extends AmirBaseParent {
             public void onClick(View view) {
                 if (AnimRunning) return;
                 boolean can=true;
-                if (!hideTexts && listener!=null) can = listener.canAcceptText(mEditText.getText());
+                if (listener!=null) can=listener.buttonClick(STATE_EDITTEXT);
+                if (can && !hideTexts && listener!=null) can = listener.canAcceptText(mEditText.getText());
                 if (can && state == STATE_EDITTEXT) {
                     startShowButtonAnimation();
                     setKeyboardV(false);
@@ -445,6 +505,11 @@ public class AmirTextButtonView extends AmirBaseParent {
 
     public boolean canSwitchToButton(){
         return canSwitchToSubmit;
+    }
+
+    public boolean canToggleButton(){
+        if (state==STATE_BUTTON || state ==STATE_BUTTON2) return  true;
+        return false;
     }
 
     boolean hideTexts=false;
@@ -545,6 +610,80 @@ public class AmirTextButtonView extends AmirBaseParent {
         }
     }
 
+
+    private void showRangeTexts(final int end,final int index,final boolean shows){
+        if (texts.size()<=index || end<index){
+            if (change==false) {
+                if (autoBack) {
+                    setTextVisible(button, buttonText.duration / 2, true);
+                    state = STATE_BUTTON;
+                    if (listener != null) listener.onStateChanged(state, buttonText);
+                } else {
+                    canSwitchToSubmit = true;
+                }
+            }else{
+                //setTextVisible(button, buttonText.duration / 4, true);
+                switchToBtn2();
+            }
+        }else {
+            canSwitchToSubmit=false;
+            label.setVisibility(View.VISIBLE);
+            state = STATE_TEXTSHOW;
+            final AmirTextData data = texts.get(index);
+            setTextViewCS(label, data);
+            if (listener!=null) listener.onStateChanged(state,data);
+            ObjectAnimator anim_ALPHA;
+            ObjectAnimator anim_SCALE_X;
+            ObjectAnimator anim_SCALE_Y;
+            anim_ALPHA = ObjectAnimator.ofFloat(label, "alpha", 0, 1);
+            anim_ALPHA.setDuration(data.duration);
+            anim_SCALE_X = ObjectAnimator.ofFloat(label, "scaleX", 0.6f, 1f);
+            anim_SCALE_X.setDuration(data.duration);
+            anim_SCALE_Y = ObjectAnimator.ofFloat(label, "scaleY", 0.6f, 1f);
+            anim_SCALE_Y.setDuration(data.duration);
+            anim_SCALE_X.setInterpolator(new android.view.animation.OvershootInterpolator());
+            anim_SCALE_Y.setInterpolator(new android.view.animation.OvershootInterpolator());
+            anim_SCALE_Y.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {}
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    if (shows){
+                        SleepTimer timer = new SleepTimer(data.sleep, new SleepTimer.SleepTimerListener() {
+                            @Override
+                            public void onEnd() {
+                                showRangeTexts(end,index,false);
+                            }
+                        });
+                        timer.setEnabled(true);
+                    }else{
+                        SleepTimer timer = new SleepTimer(50, new SleepTimer.SleepTimerListener() {
+                            @Override
+                            public void onEnd() {
+                                showRangeTexts(end,index+1,true);
+                            }
+                        });
+                        timer.setEnabled(true);
+                    }
+                }
+                @Override
+                public void onAnimationCancel(Animator animator) {}
+                @Override
+                public void onAnimationRepeat(Animator animator) {}
+            });
+            if (shows) {
+                anim_ALPHA.start();
+                anim_SCALE_X.start();
+                anim_SCALE_Y.start();
+            }else {
+                anim_ALPHA.reverse();
+                anim_SCALE_X.reverse();
+                anim_SCALE_Y.reverse();
+            }
+        }
+    }
+
+
     private void setTextVisible (View view,long duration,boolean shows){
         view.setVisibility(View.VISIBLE);
         view.setEnabled(shows);
@@ -596,16 +735,15 @@ public class AmirTextButtonView extends AmirBaseParent {
     }
 
     private Drawable mBG4 = null;
-    private boolean change=false,clickReverseColor=true,btn2select=false;
+    private boolean change=false,btn2select=false;
 
     /**
      * Switch Gradient after accept text.
      */
-    public void setButton2Background (Drawable bg,boolean enabled,boolean clickReverseColor,boolean Selected){
+    public void setButton2Background (Drawable bg,boolean enabled,boolean Selected){
         mBG4 = bg;
         this.btn2select = Selected;
         change = enabled;
-        this.clickReverseColor=clickReverseColor;
     }
 
     private void switchToNextButton(boolean firstBtn){
@@ -619,6 +757,37 @@ public class AmirTextButtonView extends AmirBaseParent {
 
 
     private  boolean keyv = false,keyh = false;
+
+    public void showTexts(long hideDuration,long sleepDuration,final int startIndex){
+        if (state == STATE_BUTTON){
+            setTextVisible(button,hideDuration,false);
+            SleepTimer sleepTimer = new SleepTimer(hideDuration+sleepDuration, new SleepTimer.SleepTimerListener() {
+                @Override
+                public void onEnd() {
+                    showTexts(startIndex,true);
+                }
+            });
+            sleepTimer.setEnabled(true);
+        }
+    }
+
+    public void showTexts(long hideDuration,long sleepDuration,final int startIndex,final  int endIndex){
+        if (state == STATE_BUTTON){
+            setTextVisible(button,hideDuration,false);
+            SleepTimer sleepTimer = new SleepTimer(hideDuration+sleepDuration, new SleepTimer.SleepTimerListener() {
+                @Override
+                public void onEnd() {
+                    showRangeTexts(endIndex,startIndex,true);
+                }
+            });
+            sleepTimer.setEnabled(true);
+        }
+    }
+
+    public boolean canShowTexts(){
+        if (state == STATE_BUTTON) return  true;
+        return  false;
+    }
 
     public void setKeyboardManager(boolean Show,boolean Hide){
         keyv=Show;
