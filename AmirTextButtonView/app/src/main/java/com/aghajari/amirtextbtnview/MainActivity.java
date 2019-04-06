@@ -9,7 +9,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.aghajari.amirtextbuttonview.AmirTextButtonListener;
@@ -40,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             }
+
+            @Override
+            public boolean buttonClick(int state) {
+                return true;
+            }
         });
 
         textbtn.setButtonData(new AmirTextData("SUBSCRIBE",300));
@@ -57,22 +61,29 @@ public class MainActivity extends AppCompatActivity {
         CD.setCornerRadius(textbtn.getRadius());
         textbtn.setDefaultBackground(CD);
 
-        Drawable image = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),R.drawable.send));
+        Drawable image;
+        image = new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.send));
         DrawableCompat.setTint(DrawableCompat.wrap(image),Color.WHITE);
         textbtn.setIcon(image);
+        textbtn.setIconWidth(textbtn.dp(20),textbtn.dp(48));
+
+
+        textbtn.setEditTextData("enter your email...",Color.GRAY,16,Color.BLACK, Typeface.DEFAULT);
+        textbtn.setEditTextMargin(textbtn.dp(18));
 
         textbtn.addText(new AmirTextData("THANKS FOR SUBSCRIBING",250,1000));
         //textbtn.addText(new AmirTextData("THANKS FOR SUBSCRIBING2",250,1000));
-        textbtn.setEditTextData("enter your email...",Color.GRAY,16,Color.BLACK, Typeface.DEFAULT);
+
 
         /**
+         // Button 2
         textbtn.setButton2Data(new AmirTextData("CANCEL",500));
 
         GradientDrawable GD2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
                 new int[] {Color.BLACK,Color.LTGRAY});
         GD2.setShape(GradientDrawable.RECTANGLE);
         GD2.setCornerRadius(textbtn.getRadius());
-        textbtn.setButton2Background(GD2,true,true,true);
+        textbtn.setButton2Background(GD2,true,true);
          */
 
         textbtn.setKeyboardManager(false,true);
