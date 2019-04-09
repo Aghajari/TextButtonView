@@ -12,7 +12,7 @@ flat button + edit text view. (subscribe button
 
 ...
 
-**Version 1.01**
+**Version 1.02**
 # Whats New ?
 
 Version 1.01 :
