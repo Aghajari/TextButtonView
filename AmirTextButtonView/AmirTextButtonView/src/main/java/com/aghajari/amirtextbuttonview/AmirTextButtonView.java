@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * @author : Amir Hossein Aghajari
- * @version : 1.01
+ * @version : 1.02
  */
 public class AmirTextButtonView extends AmirBaseParent {
 
@@ -302,6 +302,7 @@ public class AmirTextButtonView extends AmirBaseParent {
     }
 
     public void toggleButton(){
+        if (!change) return;
         if (state == STATE_BUTTON){
             switchToBtn2();
         }else if (state == STATE_BUTTON2){
@@ -316,6 +317,7 @@ public class AmirTextButtonView extends AmirBaseParent {
     }
 
     public void switchToButton2(){
+        if (!change) return;
         if (state == STATE_BUTTON){
             switchToBtn2();
         }
@@ -508,6 +510,7 @@ public class AmirTextButtonView extends AmirBaseParent {
     }
 
     public boolean canToggleButton(){
+        if (!change) return false;
         if (state==STATE_BUTTON || state ==STATE_BUTTON2) return  true;
         return false;
     }
